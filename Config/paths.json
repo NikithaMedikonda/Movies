@@ -1,0 +1,5 @@
+{
+    "criticData" : "/Users/admin/Documents/MoviesAssign/Data/critic_reviews.csv",
+    "movieData" : "/Users/admin/Documents/MoviesAssign/Data/movies.csv",
+    "userData" : "/Users/admin/Documents/MoviesAssign/Data/user_reviews.csv"
+}
