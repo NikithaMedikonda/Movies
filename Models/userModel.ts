@@ -10,8 +10,8 @@ export const userSchema = new mongoose.Schema({
         required: true
     },
     movieId: {
-        type: String,
-        required: true
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'movie'
     },
     reviewId: {
         type: String

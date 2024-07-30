@@ -97,7 +97,7 @@ export const criticSchema = new mongoose.Schema({
         }
     },
     movieId:{
-        type: String,
+        type: mongoose.Schema.Types.ObjectId, 
         ref: 'movie'
 }})
 

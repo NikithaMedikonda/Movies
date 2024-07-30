@@ -5,7 +5,6 @@ import { movie } from '../Models/movieModel';
 import { critic } from '../Models/criticModel';
 import { user } from '../Models/userModel';
 
-
 export const readFiles = () => { 
     const movieData = nconf.get('movieData');
     const userData = nconf.get('userData');
@@ -13,30 +12,35 @@ export const readFiles = () => {
     return {movieData,userData,criticData};
 }
 
-export const readCSVFile  = async <T>(filepath:string): Promise<T[]> => {
-    return new Promise((resolve,reject) => {
-        const results:T[] = [];
-        const stream = fs.createReadStream(filepath)
-        stream.pipe(csv()).on('data',(data:any)=>results.push(data))
-                          .on('end',()=>resolve(results))
-                          .on('error',(error:string)=>reject(error))
-         })       
+const insertRow = async (data: any, name: string) => {
+    try {
+        if (name === 'Movies') { 
+            await movie.create(data); 
+        } else if (name === 'User') {
+            const newId = await movie.findOne({movieId:data.movieId},{_id:1})  
+            if(newId){
+                data.movieId=newId._id
+            }
+            await user.create(data); 
+        } else  {
+            const newId = await movie.findOne({movieId:data.movieId},{_id:1})  
+            if(newId){
+                data.movieId=newId._id
+            }
+            await critic.create(data); 
+        }      
+    }
+    catch (error) {
+        console.error(`Error inserting into ${name}:`, error);
+    }
 }
 
-export const InsertData = async<T>(data : T[], name: string) => {
-    let item: T;
-    let newItem;
-    for(item of data){
-        if(name==='Movies'){
-            newItem = new movie(item);
-        }
-        else if(name==='User'){
-            newItem = new user(item);
-        }
-        else{
-            newItem = new critic(item);
-        }
-        if(newItem) await newItem.save();
-    }
-    console.log(`Data inserted succesfully into ${name} Model`);
+export const processCSVFile = async (filepath: string, name: string) => {
+      return new Promise((resolve, reject) => {
+        const stream =  fs.createReadStream(filepath)
+         stream.pipe(csv()).on('data', async (data: any) => {await insertRow(data, name);})
+                          .on('end', () => {resolve('CSV file processed successfully');})
+                          .on('error', (error) => {reject(error);});
+      });
+
 }

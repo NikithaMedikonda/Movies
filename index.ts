@@ -1,14 +1,28 @@
-import { readCSVFile, readFiles, InsertData } from "./Data/readData";
+import { processCSVFile, readFiles } from "./Data/readData";
 import {connect} from './Config/connect'
 
-const main = async() => {
-    connect();
-    const {movieData,userData,criticData} = readFiles();
-    const movies = await readCSVFile(movieData);
-    const user = await readCSVFile(userData);
-    const critics = await readCSVFile(criticData);
-    // InsertData(movies,'Movies');
-    // InsertData(user, 'User');
-    // InsertData(critics,'critics');
+const main = async () => {
+    await connect();
+    try {
+        const { movieData, userData, criticData } = readFiles();
+        // if (movieData) {
+        //     const msg = await processCSVFile(movieData, 'Movies'); 
+        //     console.log(msg);
+        //     console.log("Movies Insertion done")
+        // }
+        // if (criticData) {
+        //     const msg = await processCSVFile(criticData, 'Critic');
+        //     console.log(msg);
+        //     console.log("Critics Insertion done")
+        // }
+        if (userData) {
+            const msg = await processCSVFile(userData, 'User');
+            console.log(msg);
+            console.log("Users Insertion done")
+        }
+    } catch (error) {
+        console.error('Error processing data:', error);
+    }
 }
+
 main();
